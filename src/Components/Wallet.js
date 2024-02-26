@@ -9,12 +9,12 @@ export default function Wallet() {
 
   useEffect(() => {
     async function getData() {
-      var response = await fetch(`http://localhost:8080/wallet/${id}`);
+      var response = await fetch(`https://bakery-backend-0taa.onrender.com/wallet/${id}`);
       var data = await response.json();
       console.log(data);
       setPaymentInfo(data);
 
-      var response2 = await fetch(`http://localhost:8080/analytics/${id}`);
+      var response2 = await fetch(`https://bakery-backend-0taa.onrender.com/analytics/${id}`);
       var data2 = await response2.json();
       setAnalytics(data2);
       console.log(data2);
@@ -30,7 +30,7 @@ export default function Wallet() {
       <div className="analytics_container">
         <div className="analytics_inner">
           <div className="graph">
-            <h2 style={{color: "white"}}>Analytics</h2>
+            <h2 style={{ color: "white" }}>Analytics</h2>
             <Line
               data={{
                 datasets: [
@@ -107,7 +107,9 @@ export default function Wallet() {
             );
           })}
         </table>
+       
       </div>
     </>
   );
+  
 }

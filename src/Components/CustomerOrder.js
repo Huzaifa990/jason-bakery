@@ -15,7 +15,7 @@ export default function CustomerOrder() {
   useEffect(() => {
     async function getData() {
       var response = await fetch(
-        `http://localhost:8080/customerOrders/${customerId}/${orderStatus}`
+        `https://bakery-backend-0taa.onrender.com/customerOrders/${customerId}/${orderStatus}`
       );
       var data = await response.json();
       console.log(data);
@@ -47,12 +47,13 @@ export default function CustomerOrder() {
 
   function cancelPendingOrder(){
     var payload = {
-      status: "canceled"
+      status: "cancelled"
     }
 
-    axios.put(`http://localhost:8080/orderStatus/${orderId}`, payload).then(()=>{
-    NotificationManager.success("Order Canceled!");
+    axios.put(`https://bakery-backend-0taa.onrender.com/orderStatus/${orderId}`, payload).then(()=>{
+    NotificationManager.success("Order Cancelled!");
     closeConfirmBox();
+    // window.location.reload();
     }).catch((e)=>{
       NotificationManager.error("Something went wrong!");
       console.log(e);
@@ -64,9 +65,10 @@ export default function CustomerOrder() {
       status: "canceled"
     }
 
-    axios.put(`http://localhost:8080/orderStatus/${orderId}`, payload).then(()=>{
+    axios.put(`https://bakery-backend-0taa.onrender.com/orderStatus/${orderId}`, payload).then(()=>{
     NotificationManager.success("Order Canceled!");
     closeOngoingCofirmBox();
+    // window.location.reload();
     }).catch((e)=>{
       NotificationManager.error("Something went wrong!");
       console.log(e);
@@ -76,7 +78,7 @@ export default function CustomerOrder() {
 
     <div>
         <NotificationContainer/>
-       <div className="btn-container">
+       <div className="btn-container tap-bar">
         <button onClick={() => setOrderStatus("pending")}>
           {" "}
           Pending Orders{" "}
@@ -89,7 +91,7 @@ export default function CustomerOrder() {
           {" "}
           Completed Orders{" "}
         </button>
-        <button onClick={() => setOrderStatus("canceled")}>
+        <button onClick={() => setOrderStatus("cancelled")}>
           {" "}
           Cancelled Orders{" "}
         </button>
@@ -123,7 +125,7 @@ export default function CustomerOrder() {
                   </p>
                 </div>
 
-                <div className="orders-container">
+                <div className="order-container">
                   <h2>
                     Order <span className="heading-color">Info</span>:{" "}
                   </h2>
@@ -142,7 +144,7 @@ export default function CustomerOrder() {
                           ? "orange"
                           : item.status === "rejected"
                           ? "red"
-                          : item.status === "canceled"
+                          : item.status === "cancelled"
                           ? "crimson"
                           : item.status === "completed"
                           ? "green"
@@ -180,7 +182,8 @@ export default function CustomerOrder() {
         </>: 
         <>
          <center>
-          <h1>No {orderStatus} orders!</h1>
+          <h1 className="orderH1"
+              >No {orderStatus} orders!</h1>
         </center>
         </>}
       </div>

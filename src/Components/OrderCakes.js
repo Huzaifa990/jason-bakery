@@ -6,8 +6,7 @@ import {
   NotificationManager,
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import Stripe from "./Stripe/Stripe";
-import closeImg from "../img/icons8-close-50.png";
+import { useNavigate } from "react-router-dom";
 
 export default function OrderCakes() {
   var location = useLocation();
@@ -16,14 +15,13 @@ export default function OrderCakes() {
   var [cakeImages, setCakeImages] = useState([]);
   var customerId = localStorage.getItem("userId");
   var [sellerId, setSellerId] = useState("");
+  const navigate = useNavigate();
 
-  var [btnDisabled, setBtnDisabled] = useState(true);
+  
 
   useEffect(() => {
-    document.getElementById("overlay").style.visibility = "visible";
-
     async function getData() {
-      var res = await fetch("http://localhost:8080/cakes/" + id);
+      var res = await fetch("https://bakery-backend-0taa.onrender.com/cakes/" + id);
       var data = await res.json();
       console.log(data);
 
@@ -44,6 +42,8 @@ export default function OrderCakes() {
     var email = document.getElementById("email").value;
     var cakeName = document.getElementById("cakeName").value;
     var cakePrice = document.getElementById("cakePrice").value;
+    var paymentMethodMenu = document.getElementById("paymentMethod");
+    var paymentMethod = paymentMethodMenu[paymentMethodMenu.selectedIndex].value;
 
     var payload = {
       cakeId,
@@ -56,12 +56,20 @@ export default function OrderCakes() {
       email,
       customerId,
       sellerId,
+      paymentMethod
     };
 
     axios
-      .post("http://localhost:8080/order", payload)
-      .then(() => {
+      .post("https://bakery-backend-0taa.onrender.com/order", payload)
+      .then((res) => {
         NotificationManager.success("Order Placed!");
+        console.log(res);
+
+        if (res.data.paymentMethod === "card") {
+           navigate(`/payment/${res.data._id}/${res.data.cakePrice}`)
+        } else {
+           navigate("/customerorders");
+        }
       })
       .catch((e) => {
         NotificationManager.error("Something went wrong!");
@@ -71,7 +79,7 @@ export default function OrderCakes() {
   return (
     <div>
       <NotificationContainer />
-      <div className="form-container order-container">
+      <div className="form-container orders-container">
         <h1>Order Cake: </h1>
         <div className="img-container">
           {cakeImages.map((item) => {
@@ -132,26 +140,12 @@ export default function OrderCakes() {
         </select>
         <br /> <br />
         <button
-          disabled={btnDisabled}
+         
           className="hero-btn"
           onClick={placeOrder}
         >
           Place Order
         </button>
-      </div>
-
-      <div id="overlay">
-        <div className="confirmation">
-          <img src={closeImg} alt="icon" width={30} />
-          <center>
-            <h1>Enter card details: </h1>
-            <p style={{ fontWeight: "bold" }}>
-              You will be charged <span className="priceTag">$999</span> for
-              this transcaction
-            </p>
-          </center>
-          <Stripe />
-        </div>
       </div>
     </div>
   );

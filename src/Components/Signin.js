@@ -22,7 +22,7 @@ export default function Signin() {
   var navigate = useNavigate();
   function login() {
     axios
-      .post("http://localhost:8080/signin", formData)
+      .post("https://bakery-backend-0taa.onrender.com/signin", formData)
       .then((res) => {
         console.log(res);
         localStorage.setItem("accountType", res.data.accountType);

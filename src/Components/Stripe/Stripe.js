@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import { useParams } from "react-router-dom";
 
 import Checkout from "./Checkout";
 import "./style.css";
@@ -14,32 +15,34 @@ const stripePromise = loadStripe("pk_test_51O9YFOHyOtnDQiYKScyPqF88CzaD6kFd4u9L6
 
 export default function Stripe() {
   const [clientSecret, setClientSecret] = useState("");
+  const {amount} = useParams();
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
-    fetch("http://localhost:8080/create-payment-intent", {
+    fetch("https://bakery-backend-0taa.onrender.com/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: [{ id: "xl-tshirt", price: 1000 }] }),
+      body: JSON.stringify({price: amount}),
     })
       .then((res) => res.json())
       .then((data) => setClientSecret(data.clientSecret));
-  }, []);
+  }, [amount]);
 
   const appearance = {
-    theme: 'stripe',
+    theme: 'night',
   };
   const options = {
     clientSecret,
     appearance,
   };
 
+
   return (
     <div className="stripe-container">
       <div className="App">
         {clientSecret && (
           <Elements options={options} stripe={stripePromise}>
-            <Checkout />
+            <Checkout amount={amount}/>
           </Elements>
         )}
       </div>

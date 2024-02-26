@@ -1,12 +1,17 @@
 var express = require("express");
+var bodyParser = require("body-parser");
 var cors = require("cors");
 var bcrpyt = require("bcrypt");
+var nodemailer = require("nodemailer");
+require("dotenv").config();
+
 
 require("./DB/Conn");
 var app = express();
 app.use(express.json({ limit: "5mb" }));
 app.use(cors());
 app.use(express.static("public"));
+app.use(bodyParser.json());
 
 var Cakes = require("./Models/Cake");
 var Order = require("./Models/Order");
@@ -78,6 +83,11 @@ app.delete("/cakes/:id", async (req, res) => {
   }
 });
 
+app.get("/topselling", async (req, res) => {
+  const allCakes = await Cakes.find();
+  res.status(200).send(allCakes);
+})
+
 // ============================== ORDER SECTION =======================================
 
 app.post("/order", async (req, res) => {
@@ -136,6 +146,10 @@ app.get("/orders/:sellerId/:orderStatus", async (req, res) => {
     var findOrders = await Order.find({
       status: orderStatus,
       sellerId: sellerId,
+      $or: [
+        {paymentMethod: {$ne: 'card'}},
+        {paymentMethod: 'card', paymentStatus: true}
+      ]
     });
 
     res.status(200).send(findOrders);
@@ -281,11 +295,11 @@ app.get("/analytics/:sellerId", async (req, res) => {
 
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { items } = req.body;
+  const { price } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: 1000,
+    amount: price*100,
     currency: "usd",
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
@@ -298,7 +312,45 @@ app.post("/create-payment-intent", async (req, res) => {
   });
 });
 
-// ============================== // STRIPE SECTION END // =======================================
+// ============================== // STRIPE SECTION END // ======================================= //
+
+// ============================== // CONTACT FORM START // ======================================= //
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
+
+app.post('/submit-form', (req, res) => {
+  const formData = req.body;
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: process.env.EMAIL_RECEIVER,
+    subject: "New contact form submission",
+    html: `<p>Name: ${formData.name}</p>
+       <p>Email: ${formData.email}</p>
+       <p>Phone: ${formData.phone}</p>
+       <p>Subject: ${formData.subject}</p>
+       <p>Message: ${formData.message}</p>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.status(500).send('Error sending email');
+    } else {
+      console.log('Email sent: ' + info.response);
+      res.send('Form submitted successfully');
+    }
+  });
+});
+
+
+// ============================== // CONTACT FORM END // ======================================= //
 
 app.listen(port, () => {
   console.log("Api is running on port: " + port);

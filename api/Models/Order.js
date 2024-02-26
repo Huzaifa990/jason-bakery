@@ -55,6 +55,10 @@ var orderSchema = new mongoose.Schema({
     paymentMethod: {
         type: String,
         required: true
+    },
+    paymentStatus: {
+        type: Boolean,
+        default: false
     }
 })
 

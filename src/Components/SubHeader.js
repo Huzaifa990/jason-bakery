@@ -7,7 +7,7 @@ export default function SubHeader(props) {
 			<div className="row">
 				<div className="col-lg-8 offset-lg-2 text-center">
 					<div className="breadcrumb-text">
-						<p>We sale fresh Cakes</p>
+						<p>We sell fresh Cakes</p>
 						<h1>{props.headerName}</h1>
 					</div>
 				</div>

@@ -18,7 +18,7 @@ export default function Testimnonial() {
 							<div className="client-meta">
 								<h3>Saira Hakim <span>Local shop owner</span></h3>
 								<p className="testimonial-body">
-									" Sed ut perspiciatis unde omnis iste natus error veritatis et  quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium "
+									"Sed ut perspiciatis unde omnis iste natus error veritatis et quasi architecto beatae vitae dict eaque ipsa quae ab illo inventore Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium"
 								</p>
 								<div className="last-icon">
 									<i className="fas fa-quote-right"></i>

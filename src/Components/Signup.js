@@ -6,9 +6,13 @@ import {
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+
+
 
 export default function Signup() {
-
+  let navigate = useNavigate();
     var [formData, setFormData] = useState({
       firstName: '',
       lastName: '',
@@ -29,8 +33,9 @@ export default function Signup() {
         
 
         if(formData.password === confirmPassword){
-            axios.post("http://localhost:8080/signup", formData).then(()=>{
-                NotificationManager.success("Singup Successful!");
+            axios.post("https://bakery-backend-0taa.onrender.com/signup", formData).then(()=>{
+                NotificationManager.success("Signup Successful!");
+                 navigate("/signin");
             }).catch((e)=>{
               NotificationManager.error("Signup Failed!");
                 console.log(e);
@@ -42,6 +47,7 @@ export default function Signup() {
     }
 
   return (
+    
     <div>
       <NotificationContainer/>
       <div className="form-container signup-form">
@@ -89,13 +95,13 @@ export default function Signup() {
             name="confirmPassword"
             id="confirmPassword"
             placeholder="CONFIRM PASSWORD: "
-            onChange={setConfirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
 
         <br/> 
 
-        <select id="accountType" value={formData.accountType} onChange={handleChange} name="cakeType" style={{width: "100%"}}>
+        <select id="accountType" value={formData.accountType} onChange={handleChange} name="accountType" style={{width: "100%"}}>
           <option value="default">CHOOSE A TYPE</option>
           <option value="customer">CUSTOMER</option>
           <option value="seller">SELLER</option>

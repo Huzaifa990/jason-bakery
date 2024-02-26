@@ -1,31 +1,27 @@
+import React from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import React, { useEffect } from "react";
-import { useState } from "react";
 import {
-  NotificationManager,
   NotificationContainer,
+  NotificationManager,
 } from "react-notifications";
 import "react-notifications/lib/notifications.css";
-import Stripe from "./Stripe/Stripe";
 
 export default function MyOrders() {
-  var [orders, setOrders] = useState([]);
-  var sellerId = localStorage.getItem("userId");
-
-  var [orderStatus, setOrderStatus] = useState("pending");
+  let [orders, setOrders] = useState([]);
+  let sellerId = localStorage.getItem("userId");
+  let [orderStatus, setOrderStatus] = useState("pending");
 
   useEffect(() => {
     async function getData() {
-      var response = await fetch(
-        `http://localhost:8080/orders/${sellerId}/${orderStatus}`
+      let response = await fetch(
+        `https://bakery-backend-0taa.onrender.com/orders/${sellerId}/${orderStatus}`
       );
-      var data = await response.json();
+      let data = await response.json();
       console.log(data);
       setOrders(data);
     }
-
     getData();
-
   }, [sellerId, orderStatus]);
 
   function updateStatus(
@@ -38,26 +34,25 @@ export default function MyOrders() {
     if (status === "completed") {
       updatePayment(id, cakePrice, cakeName, customerName);
     }
-    var payload = {
+    let payload = {
       status,
     };
-
     axios
-      .put(`http://localhost:8080/orderStatus/${id}`, payload)
+      .put(`https://bakery-backend-0taa.onrender.com/orderStatus/${id}`, payload)
       .then(() => {
-        NotificationManager.success("Status Updated!");
+        NotificationManager.success("Status Updated");
+        // window.location.reload(); 
       })
       .catch((e) => {
         console.log(e);
-        NotificationManager.error("Something went wrong!");
+        NotificationManager.error("something went wrong");
       });
   }
 
   function updatePayment(orderId, price, cakeName, customerName) {
-    var newDate = new Date();
-    var date = newDate.toLocaleDateString();
-
-    var payload = {
+    let newDate = new Date();
+    let date = newDate.toLocaleDateString();
+    let payload = {
       orderId,
       sellerId,
       price,
@@ -65,11 +60,10 @@ export default function MyOrders() {
       customerName,
       date,
     };
-
     axios
-      .post("http://localhost:8080/wallet", payload)
+      .post("https://bakery-backend-0taa.onrender.com/wallet/", payload)
       .then(() => {
-        console.log("Payment Updated!");
+        console.log("Payment successful");
       })
       .catch((e) => {
         console.log(e);
@@ -79,7 +73,7 @@ export default function MyOrders() {
   return (
     <div className="order-section">
       <NotificationContainer />
-      <div className="btn-container">
+      <div className="btn-container tap-bar">
         <button onClick={() => setOrderStatus("pending")}>
           {" "}
           Pending Orders{" "}
@@ -92,125 +86,131 @@ export default function MyOrders() {
           {" "}
           Completed Orders{" "}
         </button>
-        <button onClick={() => setOrderStatus("canceled")}>
+        <button onClick={() => setOrderStatus("cancelled")}>
           {" "}
-          Cancelled Orders{" "}
+          Cancelled Order{" "}
         </button>
-        <button onClick={() => setOrderStatus("rejected")}>
-          {" "}
-          Rejected Orders{" "}
-        </button>
+        <button onClick={() => setOrderStatus("rejected")}> Rejected Order </button>
       </div>
+      {orders.length > 0 ? (
+        <>
+          {orders.map((item) => {
+            return (
+              <div className="cake-container">
+                <div className="order-img">
+                  <img src={item.cakeImages[0]} alt="cakes" />
+                </div>
+                <div className="customer-container">
+                  <h2>Customer Info: </h2>
+                  <p>
+                    <b>Customer Name: </b>
+                    {item.customerName}
+                  </p>
+                  <p>
+                    <b>Phone Number: </b>
+                    {item.phoneNumber}
+                  </p>
+                  <p>
+                    <b>Email: </b>
+                    {item.email}
+                  </p>
+                  <p>
+                    <b>Address: </b>
+                    {item.address}
+                  </p>
+                </div>
 
-      {orders.map((item) => {
-        return (
-          <div className="cake-container">
-            <div className="order-img">
-              <img src={item.cakeImages[0]} alt="cake" />
-            </div>
-
-            <div className="customer-container">
-              <h2>
-                Customer <span className="heading-color">Info</span>:{" "}
-              </h2>
-              <p>
-                <b>Customer Name: </b> {item.customerName}
-              </p>
-              <p>
-                <b>Phone Number: </b> {item.phoneNumber}
-              </p>
-              <p>
-                <b>Email: </b> {item.email}
-              </p>
-              <p>
-                <b>Address: </b> {item.address}
-              </p>
-            </div>
-
-            <div className="orders-container">
-              <h2>
-                Order <span className="heading-color">Info</span>:{" "}
-              </h2>
-              <p>
-                <b>Cake Name: </b> {item.cakeName}
-              </p>
-              <p>
-                <b>Total Bill: </b> ${item.cakePrice}
-              </p>
-              <p
-                style={{
-                  color:
-                    item.status === "pending"
-                      ? "yellow"
-                      : item.status === "ongoing"
-                      ? "orange"
-                      : item.status === "rejected"
-                      ? "red"
-                      : item.status === "canceled"
-                      ? "crimson"
-                      : item.status === "completed"
-                      ? "green"
-                      : "grey",
-                }}
-              >
-                <b>Order Status: </b> {item.status.toUpperCase()}
-              </p>
-
-              {item.status === "pending" ? (
-                <>
-                  <div className="btn-container">
-                    <button
-                      className="accept-btn"
-                      style={{ backgroundColor: "#2ecc71", border: "none" }}
-                      onClick={() => updateStatus("ongoing", item._id)}
-                    >
-                      {" "}
-                      Accept{" "}
-                    </button>
-                    <button
-                      className="reject-btn"
-                      style={{
-                        backgroundColor: "crimson",
-                        border: "none",
-                        marginLeft: "15px",
-                      }}
-                      onClick={() => updateStatus("rejected", item._id)}
-                    >
-                      {" "}
-                      Reject
-                    </button>
-                  </div>
-                </>
-              ) : null}
-
-              {item.status === "ongoing" ? (
-                <>
-                  <div className="btn-container">
-                    <button
-                      className="accept-btn"
-                      style={{ backgroundColor: "#2ecc71", border: "none" }}
-                      onClick={() =>
-                        updateStatus(
-                          "completed",
-                          item._id,
-                          item.cakePrice,
-                          item.cakeName,
-                          item.customerName
-                        )
-                      }
-                    >
-                      {" "}
-                      Mark As Complete{" "}
-                    </button>
-                  </div>
-                </>
-              ) : null}
-            </div>
-          </div>
-        );
-      })}
-
-      
+                <div className="order-container">
+                  <h2>Order Info: </h2>
+                  <p>
+                    <b>Cake Name: </b>
+                    {item.cakeName}
+                  </p>
+                  <p>
+                    <b>Price Total: </b>${item.cakePrice}
+                  </p>
+                  <p
+                    style={{
+                      color:
+                        item.status === "pending"
+                          ? "yellow"
+                          : item.status === "ongoing"
+                          ? "orange"
+                          : item.status === "completed"
+                          ? "green"
+                          : item.status === "cancelled"
+                          ? "red"
+                          : "gray",
+                    }}
+                  >
+                    <b>Order Status: </b>
+                    {item.status.toUpperCase()}
+                  </p>
+                  {item.status === "pending" ? (
+                    <>
+                      <div className="btn-container">
+                        <button
+                          className="accept-btn"
+                          style={{ backgroundColor: "green", border: "none" }}
+                          onClick={() => updateStatus("ongoing", item._id)}
+                        >
+                          {" "}
+                          Accept{" "}
+                        </button>
+                        <button
+                          className="reject-btn"
+                          style={{
+                            backgroundColor: "red",
+                            border: "none",
+                            marginLeft: "15px",
+                          }}
+                          onClick={() => updateStatus("rejected", item._id)}
+                        >
+                          {" "}
+                          Reject{" "}
+                        </button>
+                      </div>
+                    </>
+                  ) : null}
+                  {item.status === "ongoing" ? (
+                    <>
+                      <div className="btn-container">
+                        <button
+                          className="accept-btn"
+                          style={{ backgroundColor: "green", border: "none" }}
+                          onClick={() =>
+                            updateStatus(
+                              "completed",
+                              item._id,
+                              item.cakePrice,
+                              item.cakeName,
+                              item.customerName
+                            )
+                          }
+                        >
+                          {" "}
+                          Complete This Order{" "}
+                        </button>
+                      </div>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </>
+      ) : (
+        <>
+          <center>
+            {" "}
+            <h1
+             className="orderH1"
+            >
+              No {orderStatus} Orders
+            </h1>
+          </center>
+        </>
+      )}
     </div>
   );
 }

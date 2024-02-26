@@ -42,13 +42,14 @@ export default function AddCakes() {
     };
 
     axios
-      .post("http://localhost:8080/cakes", payload)
+      .post("https://bakery-backend-0taa.onrender.com/cakes", payload)
       .then((res) => {
-        NotificationManager.success("Cake Uploaded!")
+        NotificationManager.success("Cake Uploaded!");
+        navigate("/allcakes");
         console.log(res);
       })
       .catch((e) => {
-        NotificationManager.error("Something went wrong!")
+        NotificationManager.error("Something went wrong!");
         console.log(e);
       });
   }

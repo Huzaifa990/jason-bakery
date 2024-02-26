@@ -17,7 +17,7 @@ export default function EditCake() {
 
     useEffect(()=>{
       async function getData(){
-        var response = await fetch("http://localhost:8080/cakes/"+id);
+        var response = await fetch("https://bakery-backend-0taa.onrender.com/cakes/"+id);
         var data = await response.json();
         console.log(data);
         document.getElementById("cakeName").value = data.cakeName;
@@ -42,7 +42,7 @@ export default function EditCake() {
         cakeImages: images
       };
 
-      axios.put("http://localhost:8080/cakes/"+id, payload).then(()=>{
+      axios.put("https://bakery-backend-0taa.onrender.com/cakes/"+id, payload).then(()=>{
         NotificationManager.success("Information Updated!")
       }).catch((e)=>{
         console.log(e);

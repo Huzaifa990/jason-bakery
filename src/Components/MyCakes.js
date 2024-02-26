@@ -18,7 +18,7 @@ export default function MyCakes() {
 
     useEffect(()=>{
         async function getData(){
-            var response = await fetch("http://localhost:8080/myCakes/"+sellerId);
+            var response = await fetch("https://bakery-backend-0taa.onrender.com/myCakes/"+sellerId);
             var data = await response.json();
             console.log(data);
             setCakes(data);
@@ -32,9 +32,12 @@ export default function MyCakes() {
     }
 
     function deleteCake(id){
-        axios.delete("http://localhost:8080/cakes/"+id).then(()=>{
+        axios.delete("https://bakery-backend-0taa.onrender.com/cakes/"+id).then(()=>{
             NotificationManager.success("Cake Deleted!");
-            window.location.reload();
+          //  setTimeout(() => {
+          //   window.location.reload();
+          //  }, 2000);
+           
         }).catch((e)=>{
             NotificationManager.error("Something went wrong!");
             console.log(e);
@@ -60,7 +63,7 @@ export default function MyCakes() {
                     <p><b>Price: </b> ${item.price}</p>
                 </div>
 
-                <div className='orders-container'>
+                <div className='order-container'>
                     <center><h2>Manage <span className='heading-color'>Cake</span>: </h2></center>
                     <br/> 
                     <div className='icons-container'>

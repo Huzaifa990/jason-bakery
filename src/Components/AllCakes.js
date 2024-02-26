@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { useNavigate } from 'react-router-dom'
+import { Helmet } from 'react-helmet';
 
 export default function AllCakes() {
 
@@ -9,7 +10,7 @@ export default function AllCakes() {
 
     useEffect(()=>{
         async function getData(){
-            var res = await fetch("http://localhost:8080/cakes")
+            var res = await fetch("https://bakery-backend-0taa.onrender.com/cakes")
             var data = await res.json()
             console.log(data);
             setCakes(data);
@@ -24,7 +25,12 @@ export default function AllCakes() {
     }
   return (
     <div className='main-cake'>
-        <h1>Fresh Cakes: </h1>
+     <Helmet>
+        <title>All Cakes</title>
+        <meta name="description" content='This page show all cakes for Sweet Tooth Bakery.' />
+        <meta name="keywords" content='choclate cake, sweet cake, sponge cake, unicorn cake' />
+     </Helmet>
+        <h2>Fresh Cakes: </h2>
 
         <div className='cakeContainer'>
             {cakes.map((item)=>{

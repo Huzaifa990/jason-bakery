@@ -5,7 +5,10 @@
     -webkit-font-smoothing: antialiased;
     display: flex;
     justify-content: center;
+    align-items: center;
     align-content: center;
+    height: 100vh;
+    background-color: #051922;
    
   }
   
@@ -15,8 +18,9 @@
     align-self: center;
     box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
       0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
-    border-radius: 7px;
+    border-radius: 10px;
     padding: 40px;
+    background-color: #F28123;
   }
   
   
@@ -34,7 +38,7 @@
   
   /* Buttons and links */
   #submit {
-    background: #5469d4;
+    background: #051922;
     font-family: Arial, sans-serif;
     color: #ffffff;
     border-radius: 4px;
@@ -110,6 +114,9 @@
     -webkit-animation: loading 2s infinite ease;
     animation: loading 2s infinite ease;
   }
+
+ 
+
   
   @keyframes loading {
     0% {

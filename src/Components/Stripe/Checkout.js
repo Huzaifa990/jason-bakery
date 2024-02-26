@@ -4,10 +4,12 @@ import {
   useStripe,
   useElements
 } from "@stripe/react-stripe-js";
+import { useParams } from "react-router-dom";
 
-export default function Checkout() {
+export default function Checkout(props) {
   const stripe = useStripe();
   const elements = useElements();
+  const {orderId} = useParams();
 
 
   const [message, setMessage] = useState(null);
@@ -59,7 +61,7 @@ export default function Checkout() {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "http://localhost:3000",
+        return_url: `http://localhost:3000/confirmation/${orderId}`,
       },
     });
 
@@ -83,6 +85,13 @@ export default function Checkout() {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
+      <center>
+        <p style={{ fontWeight: "bold", fontSize: "20px" }}>
+          Your Total Amount Is:{" "}
+          <i style={{ color: "#85d996", textShadow: '2px 2px 2px black', fontSize: '30px' }}>${props.amount}</i>
+        </p>
+        <br></br>
+      </center>
 
       <PaymentElement id="payment-element" options={paymentElementOptions} />
       <button disabled={isLoading || !stripe || !elements} id="submit">
